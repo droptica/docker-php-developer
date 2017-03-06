@@ -1,14 +1,9 @@
 FROM dropitca/composer:php5
 
-RUN curl -L -o /tmp/xdebug.tgz http://xdebug.org/files/xdebug-2.4.1.tgz \
-        && tar xfz /tmp/xdebug.tgz \
-        && rm -r /tmp/xdebug.tgz \
-        && mv xdebug-2.4.1 /usr/src/php/ext/xdebug \
-        && docker-php-ext-install xdebug
+RUN pecl install xdebug && docker-php-ext-enable xdebug
 
 RUN apt-get update \
-  && apt-get install --no-install-recommends  -y bash-completion rubygems mysql-client libmagickwand-dev imagemagick \
-  && gem install bundler
+  && apt-get install --no-install-recommends  -y bash-completion mysql-client libmagickwand-dev imagemagick
 
 RUN apt-get update && apt-get install -y \
   libfreetype6-dev \
@@ -24,11 +19,8 @@ RUN apt-get update && apt-get install -y \
 
 RUN apt-get install -y \
   pkg-config libmagickwand-dev imagemagick \
-  && curl -L -o /tmp/imagick.tgz http://pecl.php.net/get/imagick-3.4.2.tgz \
-  && tar xfz /tmp/imagick.tgz \
-  && rm -r /tmp/imagick.tgz \
-  && mv imagick-3.4.2 /usr/src/php/ext/imagick \
-  && docker-php-ext-install imagick
+  && printf "\n" | pecl install imagick \
+  && docker-php-ext-enable imagick
 
 RUN curl -LsS https://symfony.com/installer -o /usr/local/bin/symfony \
     && chmod a+x /usr/local/bin/symfony
