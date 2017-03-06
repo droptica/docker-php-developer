@@ -1,10 +1,6 @@
-FROM dropitca/composer:php5
+FROM droptica/composer:php5
 
-RUN curl -L -o /tmp/xdebug.tgz http://xdebug.org/files/xdebug-2.4.1.tgz \
-        && tar xfz /tmp/xdebug.tgz \
-        && rm -r /tmp/xdebug.tgz \
-        && mv xdebug-2.4.1 /usr/src/php/ext/xdebug \
-        && docker-php-ext-install xdebug
+RUN pecl install xdebug && docker-php-ext-enable xdebug
 
 RUN apt-get update \
   && apt-get install --no-install-recommends  -y bash-completion rubygems mysql-client libmagickwand-dev imagemagick \
@@ -24,16 +20,13 @@ RUN apt-get update && apt-get install -y \
 
 RUN apt-get install -y \
   pkg-config libmagickwand-dev imagemagick \
-  && curl -L -o /tmp/imagick.tgz http://pecl.php.net/get/imagick-3.4.2.tgz \
-  && tar xfz /tmp/imagick.tgz \
-  && rm -r /tmp/imagick.tgz \
-  && mv imagick-3.4.2 /usr/src/php/ext/imagick \
-  && docker-php-ext-install imagick
+  && printf "\n" | pecl install imagick \
+  && docker-php-ext-enable imagick
 
 RUN curl -LsS https://symfony.com/installer -o /usr/local/bin/symfony \
     && chmod a+x /usr/local/bin/symfony
 
-RUN mkdir  /root/composer/
+RUN mkdir /root/composer/
 
 RUN composer global require bamarni/symfony-console-autocomplete -d /root/composer/
 
@@ -74,12 +67,11 @@ RUN git config --global alias.st status; \
   git config --global merge.summary true; \
   git config --global merge.tool meld;
 
-COPY php5/config/php.ini /usr/local/etc/php/conf.d/php.ini
+COPY config/php.ini /usr/local/etc/php/conf.d/php.ini
 
-COPY php5/config/bash_aliases /root/.bashrc
+COPY config/bash_aliases /root/.bashrc
 
-#https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
-COPY php5/config/git-prompt.sh /root/.git-prompt.sh
+COPY config/git-prompt.sh /root/.git-prompt.sh
 
 RUN echo "source ~/.git-prompt.sh" >> /root/.bashrc
 
