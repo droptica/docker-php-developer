@@ -1,0 +1,17 @@
+sudo: required
+
+language: python
+python:
+  - "3.6"
+
+services:
+  - docker
+
+before_install:
+  - make
+
+script:
+  - make test
+
+notifications:
+  email: false
