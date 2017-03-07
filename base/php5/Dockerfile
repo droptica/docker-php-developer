@@ -3,10 +3,15 @@ FROM droptica/composer:php5
 RUN pecl install xdebug && docker-php-ext-enable xdebug
 
 RUN apt-get update \
-  && apt-get install --no-install-recommends  -y bash-completion rubygems mysql-client libmagickwand-dev imagemagick \
+  && apt-get install --no-install-recommends  -y bash-completion mysql-client libmagickwand-dev imagemagick
+
+RUN apt-get install --no-install-recommends -y rubygems \
   && gem install bundler
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get install -y --no-install-recommends python python-pip python-yaml python-setuptools pkg-config \
+  && easy_install python-dotenv
+
+RUN apt-get install -y \
   libfreetype6-dev \
   libjpeg62-turbo-dev \
   libmcrypt-dev \
@@ -26,13 +31,24 @@ RUN apt-get install -y \
 RUN curl -LsS https://symfony.com/installer -o /usr/local/bin/symfony \
     && chmod a+x /usr/local/bin/symfony
 
-RUN mkdir /root/composer/
+RUN mkdir /root/composer
 
 RUN composer global require bamarni/symfony-console-autocomplete -d /root/composer/
 
 ENV PATH "/root/composer/vendor/bin:$PATH"
 
 RUN symfony-autocomplete composer --shell bash > /etc/bash_completion.d/composer
+
+RUN php -r "readfile('https://s3.amazonaws.com/files.drush.org/drush.phar');" > /usr/bin/drush \
+    && chmod +x /usr/bin/drush \
+    && drush init -y
+
+RUN drush -y dl registry_rebuild-7.x
+
+RUN php -r "readfile('https://drupalconsole.com/installer');" > /usr/local/bin/drupal \
+    && chmod +x /usr/local/bin/drupal && drupal init --no-interaction
+
+RUN pip install docker-console
 
 RUN git config --global alias.st status; \
   git config --global alias.ci commit; \
@@ -73,7 +89,7 @@ COPY config/bash_aliases /root/.bashrc
 
 COPY config/git-prompt.sh /root/.git-prompt.sh
 
-RUN echo "source ~/.git-prompt.sh" >> /root/.bashrc
+RUN echo "source /root/.git-prompt.sh" >> /root/.bashrc
 
 RUN echo "alias ls='ls --color=auto'" >> /root/.bashrc
 
