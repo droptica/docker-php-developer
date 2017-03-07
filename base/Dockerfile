@@ -89,6 +89,8 @@ COPY php5/config/bash_aliases /root/.bashrc
 
 COPY php5/config/git-prompt.sh /root/.git-prompt.sh
 
+#need a new line
+RUN echo "" >> /root/.bashrc
 RUN echo "source /root/.git-prompt.sh" >> /root/.bashrc
 
 RUN echo "alias ls='ls --color=auto'" >> /root/.bashrc
