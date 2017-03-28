@@ -1,4 +1,6 @@
-# Apache and php on docker tailored for Drupal/Wordpress
+[![Build Status](https://travis-ci.org/droptica/docker-php-developer.svg?branch=master)](https://travis-ci.org/droptica/docker-php-developer)
+
+# Docker image to hold development tools for a php project (eg. drush, composer)
 
 ## Tags
 - `php7`, `latest`,
