@@ -1,37 +1,68 @@
-FROM droptica/composer
+FROM php:5.6
 
-RUN pecl install xdebug && docker-php-ext-enable xdebug
+MAINTAINER Droptica <info@droptica.com>
 
-RUN apt-get update \
-  && apt-get install --no-install-recommends  -y bash-completion mysql-client libmagickwand-dev imagemagick
+ENV COMPOSER_VERSION 1.4.1
 
-RUN apt-get update && apt-get install -y \
-  libfreetype6-dev \
-  libjpeg62-turbo-dev \
-  libmcrypt-dev \
-  libpng12-dev \
-  mcrypt \
-  libjpeg-dev \
-  zlib1g-dev libicu-dev g++ \
+# Xdebug env variables
+ENV XDEBUG_CONFIG "idekey=phpstorm"
+ENV PHP_IDE_CONFIG "serverName=application"
+
+# Register the COMPOSER_HOME environment variable
+ENV COMPOSER_HOME /composer
+# Add global binary directory to PATH and make sure to re-export it
+ENV PATH "/composer/vendor/bin:$PATH"
+# Allow Composer to be run as root
+ENV COMPOSER_ALLOW_SUPERUSER 1
+
+RUN apt-get update && apt-get install --no-install-recommends  -y \
+    python \
+    python-pip \
+    python-yaml \
+    python-setuptools \
+    pkg-config \
+    mysql-client \
+    bash-completion \
+    imagemagick \
+    libfreetype6-dev \
+    libjpeg62-turbo-dev \
+    libmagickwand-dev \
+    libmcrypt-dev \
+    libpng12-dev \
+    libjpeg-dev \
+    libicu-dev \
+    libbz2-dev \
+    libxslt-dev \
+    libldap2-dev \
+    zlib1g-dev \
+    mcrypt \
+    git \
+    unzip \
+    wget
+
+#PHP Extensions
+RUN pecl install xdebug && docker-php-ext-enable xdebug \
+  && printf "\n" | pecl install imagick && docker-php-ext-enable imagick \
   && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
-  && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql mbstring zip bcmath intl exif fileinfo\
-  && docker-php-ext-enable opcache
+  && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql mbstring zip bcmath intl exif fileinfo \
+  && docker-php-ext-enable opcache \
+  && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.back
 
-RUN apt-get install -y \
-  pkg-config libmagickwand-dev imagemagick \
-  && printf "\n" | pecl install imagick \
-  && docker-php-ext-enable imagick
+#COMPOSER
+RUN wget https://getcomposer.org/download/$COMPOSER_VERSION/composer.phar -O /usr/bin/composer && chmod +x /usr/bin/composer
+RUN mkdir /composer
 
-RUN curl -LsS https://symfony.com/installer -o /usr/local/bin/symfony \
-    && chmod a+x /usr/local/bin/symfony
+#SYMFONY CONSOLE
+RUN wget https://symfony.com/installer -O /usr/bin/symfony && chmod +x /usr/bin/symfony
 
-RUN mkdir /root/composer
+#DRUSH
+RUN wget https://s3.amazonaws.com/files.drush.org/drush.phar -O /usr/bin/drush && chmod +x /usr/bin/drush && drush init -y
 
-RUN composer global require bamarni/symfony-console-autocomplete -d /root/composer/
+#DRUPAL CONSOLE
+RUN wget https://drupalconsole.com/installer -O /usr/bin/drupal && chmod +x /usr/bin/drupal
 
-ENV PATH "/root/composer/vendor/bin:$PATH"
-
-RUN symfony-autocomplete composer --shell bash > /etc/bash_completion.d/composer
+#DOCKER CONSOLE
+RUN pip install docker-console
 
 RUN git config --global alias.st status; \
   git config --global alias.ci commit; \
@@ -66,20 +97,26 @@ RUN git config --global alias.st status; \
   git config --global merge.summary true; \
   git config --global merge.tool meld;
 
-COPY config/php.ini /usr/local/etc/php/conf.d/php.ini
-
 COPY config/bash_aliases /root/.bashrc
 
 #https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
 COPY config/git-prompt.sh /root/.git-prompt.sh
+RUN chmod +x /root/.git-prompt.sh
+
+COPY config/debug-php /usr/bin/debug-php
+RUN chmod +x /usr/bin/debug-php
+COPY config/xdebug-php.ini /usr/local/etc/php/conf.d/xdebug-php.ini
+
+COPY config/versions /usr/bin/versions
+RUN chmod +x /usr/bin/versions
 
 RUN echo "source ~/.git-prompt.sh" >> /root/.bashrc
-
 RUN echo "alias ls='ls --color=auto'" >> /root/.bashrc
 
+#CLEANING
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-ENV  XDEBUG_CONFIG "idekey=phpstorm"
+WORKDIR /app
 
 ENTRYPOINT []
 

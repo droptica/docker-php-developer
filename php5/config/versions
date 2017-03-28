@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+composer --version
+
+drupal --version
+
+symfony --version
+
+echo `drush --version`
+echo "Docker Console `dcon --version`"
+
+php --version
+
+mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.back /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+php -r 'foreach (get_loaded_extensions() as $extension) echo "$extension: " . phpversion($extension) . "\n";' | grep xdebug
+php -r 'foreach (get_loaded_extensions() as $extension) echo "$extension: " . phpversion($extension) . "\n";' | grep imagick
+
+python --version
