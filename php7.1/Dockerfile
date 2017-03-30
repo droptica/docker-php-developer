@@ -43,10 +43,15 @@ RUN apt-get update && apt-get install --no-install-recommends  -y \
 #PHP Extensions
 RUN pecl install xdebug && docker-php-ext-enable xdebug \
   && printf "\n" | pecl install imagick && docker-php-ext-enable imagick \
+  && echo "no" | pecl install memcached && docker-php-ext-enable memcached \
+  && pecl install redis && docker-php-ext-enable redis \
   && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
   && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql mbstring zip bcmath intl exif fileinfo \
   && docker-php-ext-enable opcache \
-  && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.back
+  && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini $PHP_INI_DIR/conf.d/docker-php-ext-xdebug.ini.back
+
+# Time Zone
+RUN echo "date.timezone=${PHP_TIMEZONE:-UTC}" > $PHP_INI_DIR/conf.d/date_timezone.ini
 
 #COMPOSER
 RUN wget https://getcomposer.org/download/$COMPOSER_VERSION/composer.phar -O /usr/bin/composer && chmod +x /usr/bin/composer
@@ -105,7 +110,7 @@ RUN chmod +x /root/.git-prompt.sh
 
 COPY config/debug-php /usr/bin/debug-php
 RUN chmod +x /usr/bin/debug-php
-COPY config/xdebug-php.ini /usr/local/etc/php/conf.d/xdebug-php.ini
+COPY config/xdebug-php.ini $PHP_INI_DIR/conf.d/xdebug-php.ini
 
 COPY config/versions /usr/bin/versions
 RUN chmod +x /usr/bin/versions
