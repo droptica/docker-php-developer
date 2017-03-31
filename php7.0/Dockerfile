@@ -24,6 +24,7 @@ RUN apt-get update && apt-get install --no-install-recommends  -y \
     mysql-client \
     bash-completion \
     imagemagick \
+    libmemcached-dev \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
     libmagickwand-dev \
