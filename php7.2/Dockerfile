@@ -1,4 +1,4 @@
-FROM php:7.1
+FROM php:7.2
 MAINTAINER Droptica <info@droptica.com>
 
 ENV DRUSH_VERSION 8.1.15

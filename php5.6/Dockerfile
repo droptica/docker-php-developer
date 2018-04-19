@@ -1,7 +1,7 @@
 FROM php:5.6
-
 MAINTAINER Droptica <info@droptica.com>
 
+ENV DRUSH_VERSION 8.1.15
 ENV COMPOSER_VERSION 1.4.1
 
 # Xdebug env variables
@@ -24,6 +24,8 @@ RUN apt-get update && apt-get install --no-install-recommends  -y \
     mysql-client \
     bash-completion \
     imagemagick \
+    libc-client-dev \
+    libkrb5-dev \
     libmemcached-dev \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
@@ -41,31 +43,19 @@ RUN apt-get update && apt-get install --no-install-recommends  -y \
     unzip \
     wget
 
-#PHP Extensions
-RUN pecl install xdebug && docker-php-ext-enable xdebug \
-  && printf "\n" | pecl install imagick && docker-php-ext-enable imagick \
-  && echo "no" | pecl install memcached-2.2.0 && docker-php-ext-enable memcached \
-  && pecl install redis && docker-php-ext-enable redis \
-  && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
-  && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql mbstring zip bcmath intl exif fileinfo \
-  && docker-php-ext-enable opcache \
-  && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini $PHP_INI_DIR/conf.d/docker-php-ext-xdebug.ini.back
+# PHP extensions
+RUN pecl install imagick memcached-2.2.0 redis xdebug
+RUN docker-php-ext-enable imagick memcached redis
+
+RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl
+RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
+
+RUN docker-php-ext-install -j$(nproc) bcmath exif fileinfo gd intl imap mbstring mysqli pdo pdo_mysql soap xmlrpc zip
+
+RUN docker-php-ext-enable opcache
 
 # Time Zone
 RUN echo "date.timezone=${PHP_TIMEZONE:-UTC}" > $PHP_INI_DIR/conf.d/date_timezone.ini
-
-#COMPOSER
-RUN wget https://getcomposer.org/download/$COMPOSER_VERSION/composer.phar -O /usr/bin/composer && chmod +x /usr/bin/composer
-RUN mkdir /composer
-
-#SYMFONY CONSOLE
-RUN wget https://symfony.com/installer -O /usr/bin/symfony && chmod +x /usr/bin/symfony
-
-#DRUSH
-RUN wget https://s3.amazonaws.com/files.drush.org/drush.phar -O /usr/bin/drush && chmod +x /usr/bin/drush && drush init -y
-
-#DRUPAL CONSOLE
-RUN wget https://drupalconsole.com/installer -O /usr/bin/drupal && chmod +x /usr/bin/drupal
 
 #DOCKER CONSOLE
 RUN pip install docker-console
@@ -103,27 +93,40 @@ RUN git config --global alias.st status; \
   git config --global merge.summary true; \
   git config --global merge.tool meld;
 
-COPY config/bash_aliases /root/.bashrc
+#
+# Additional scripts and settings
+#
 
-#https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
-COPY config/git-prompt.sh /root/.git-prompt.sh
-RUN chmod +x /root/.git-prompt.sh
+# Bash git prompt
+RUN wget https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh -O /root/.git-prompt.sh && chmod +x /root/.git-prompt.sh
 
-COPY config/debug-php /usr/bin/debug-php
+# Composer
+RUN wget https://getcomposer.org/download/${COMPOSER_VERSION}/composer.phar -O /usr/bin/composer && chmod +x /usr/bin/composer
+RUN mkdir /composer
+
+# Symfony console
+RUN wget https://symfony.com/installer -O /usr/bin/symfony && chmod +x /usr/bin/symfony
+
+# Drush
+RUN wget https://github.com/drush-ops/drush/releases/download/${DRUSH_VERSION}/drush.phar -O /usr/bin/drush && chmod +x /usr/bin/drush && drush init -y
+
+#DRUPAL CONSOLE
+RUN wget https://drupalconsole.com/installer -O /usr/bin/drupal && chmod +x /usr/bin/drupal
+
+
+COPY debug-php /usr/bin/debug-php
 RUN chmod +x /usr/bin/debug-php
-COPY config/xdebug-php.ini $PHP_INI_DIR/conf.d/xdebug-php.ini
+#COPY ../config/xdebug-php.ini $PHP_INI_DIR/conf.d/xdebug-php.ini
 
-COPY config/versions /usr/bin/versions
-RUN chmod +x /usr/bin/versions
+#COPY ../config/versions /usr/bin/versions
+#RUN chmod +x /usr/bin/versions
 
 RUN echo "source ~/.git-prompt.sh" >> /root/.bashrc
 RUN echo "alias ls='ls --color=auto'" >> /root/.bashrc
 
-#CLEANING
+# Cleaning
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 WORKDIR /app
-
 ENTRYPOINT []
-
 CMD ["bash"]
