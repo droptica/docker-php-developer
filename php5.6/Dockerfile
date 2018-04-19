@@ -1,5 +1,4 @@
 FROM php:5.6
-
 MAINTAINER Droptica <info@droptica.com>
 
 ENV COMPOSER_VERSION 1.4.1
@@ -41,15 +40,18 @@ RUN apt-get update && apt-get install --no-install-recommends  -y \
     unzip \
     wget
 
-#PHP Extensions
-RUN pecl install xdebug && docker-php-ext-enable xdebug \
-  && printf "\n" | pecl install imagick && docker-php-ext-enable imagick \
-  && echo "no" | pecl install memcached-2.2.0 && docker-php-ext-enable memcached \
-  && pecl install redis && docker-php-ext-enable redis \
-  && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
-  && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql mbstring zip bcmath intl exif fileinfo \
-  && docker-php-ext-enable opcache \
-  && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini $PHP_INI_DIR/conf.d/docker-php-ext-xdebug.ini.back
+# PHP extensions
+RUN pecl install imagick memcached-2.2.0 redis xdebug
+RUN docker-php-ext-enable imagick memcached redis xdebug
+
+RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl
+RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
+
+RUN docker-php-ext-install -j$(nproc) bcmath exif fileinfo gd intl imap mbstring mysqli pdo pdo_mysql soap xmlrpc zip
+
+RUN docker-php-ext-enable opcache
+
+RUN mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini $PHP_INI_DIR/conf.d/docker-php-ext-xdebug.ini.back
 
 # Time Zone
 RUN echo "date.timezone=${PHP_TIMEZONE:-UTC}" > $PHP_INI_DIR/conf.d/date_timezone.ini
