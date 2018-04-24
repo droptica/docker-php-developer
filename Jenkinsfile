@@ -84,8 +84,8 @@ node {
             php70.push("7.0")*/
 
             echo "Push: ${php71_tag}"
-            /*php71.push("${php71_tag}")
-            php71.push("7.1")*/
+            /*php71.push("${php71_tag}")*/
+            php71.push("7.1-automated")
 
             echo "Push: ${php72_tag}"
             /*php72.push("${php72_tag}")
