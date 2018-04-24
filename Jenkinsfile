@@ -18,10 +18,10 @@ node {
         /* This builds the actual image; synonymous to
          * docker build on the command line */
 
-        php56 = docker.build("droptica/php-dev:5.6-${env.BUILD_ID}", "./php5.6 --no-cache")
-        php70 = docker.build("droptica/php-dev:7.0-${env.BUILD_ID}", "./php7.0 --no-cache")
-        php71 = docker.build("droptica/php-dev:7.1-${env.BUILD_ID}", "./php7.1 --no-cache")
-        php72 = docker.build("droptica/php-dev:7.2-${env.BUILD_ID}", "./php7.2 --no-cache")
+        php56 = docker.build("droptica/php-dev:5.6-${env.BUILD_ID}", "--no-cache ./php5.6")
+        php70 = docker.build("droptica/php-dev:7.0-${env.BUILD_ID}", "--no-cache ./php7.0")
+        php71 = docker.build("droptica/php-dev:7.1-${env.BUILD_ID}", "--no-cache ./php7.1")
+        php72 = docker.build("droptica/php-dev:7.2-${env.BUILD_ID}", "--no-cache ./php7.2")
     }
 
     stage('Test image') {
