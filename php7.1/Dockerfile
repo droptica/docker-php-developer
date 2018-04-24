@@ -44,8 +44,8 @@ RUN apt-get update && apt-get install --no-install-recommends  -y \
     wget
 
 # PHP extensions
-RUN pecl install imagick memcached-2.2.0 redis xdebug
-RUN docker-php-ext-enable imagick memcached redis
+RUN pecl install imagick memcached redis xdebug
+RUN docker-php-ext-enable imagick memcached redis xdebug
 
 RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl
 RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
