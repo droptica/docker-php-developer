@@ -76,20 +76,20 @@ node {
          * Pushing multiple tags is cheap, as all the layers are reused. */
         docker.withRegistry('https://registry.hub.docker.com', 'hub.docker.com') {
             echo "Push: ${php56_tag}"
-            /*php56.push("${php56_tag}")
-            php56.push("5.6")*/
+            php56.push("${php56_tag}")
+            php56.push("5.6")
 
             echo "Push: ${php70_tag}"
-            /*php70.push("${php70_tag}")
-            php70.push("7.0")*/
+            php70.push("${php70_tag}")
+            php70.push("7.0")
 
             echo "Push: ${php71_tag}"
-            /*php71.push("${php71_tag}")*/
-            php71.push("7.1-automated")
+            php71.push("${php71_tag}")
+            php71.push("7.1")
 
             echo "Push: ${php72_tag}"
-            /*php72.push("${php72_tag}")
-            php72.push("7.2")*/
+            php72.push("${php72_tag}")
+            php72.push("7.2")
         }
     }
 }
