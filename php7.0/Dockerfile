@@ -15,7 +15,9 @@ ENV PATH "/composer/vendor/bin:$PATH"
 # Allow Composer to be run as root
 ENV COMPOSER_ALLOW_SUPERUSER 1
 
-RUN apt-get update && apt-get install --no-install-recommends  -y \
+RUN apt-get update
+RUN apt-get dist-upgrade -y
+RUN apt-get install --no-install-recommends -y \
     python \
     python-pip \
     python-yaml \
