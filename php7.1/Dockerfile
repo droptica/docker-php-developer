@@ -31,7 +31,7 @@ RUN apt-get update && apt-get install --no-install-recommends  -y \
     libjpeg62-turbo-dev \
     libmagickwand-dev \
     libmcrypt-dev \
-    libpng12-dev \
+    libpng-dev \
     libjpeg-dev \
     libicu-dev \
     libbz2-dev \
