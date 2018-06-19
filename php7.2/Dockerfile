@@ -99,6 +99,9 @@ RUN git config --global alias.st status; \
 # Additional scripts and settings
 #
 
+# Custom php.ini
+COPY basic-php.ini /usr/local/etc/php/conf.d/basic-php.ini
+
 # Bash git prompt
 RUN wget https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh -O /root/.git-prompt.sh && chmod +x /root/.git-prompt.sh
 
