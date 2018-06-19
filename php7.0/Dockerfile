@@ -100,7 +100,7 @@ RUN git config --global alias.st status; \
 #
 
 # Custom php.ini
-COPY basic-php.ini /usr/local/etc/php/conf.d/basic-php.ini
+COPY ./configs/php.ini ${PHP_INI_DIR}/conf.d/droptica-customs.ini
 
 # Bash git prompt
 RUN wget https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh -O /root/.git-prompt.sh && chmod +x /root/.git-prompt.sh
