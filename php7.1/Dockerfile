@@ -119,7 +119,7 @@ RUN wget https://github.com/drush-ops/drush/releases/download/${DRUSH_VERSION}/d
 RUN wget https://drupalconsole.com/installer -O /usr/bin/drupal && chmod +x /usr/bin/drupal
 
 
-COPY debug-php /usr/bin/debug-php
+COPY ./configs/debug-php /usr/bin/debug-php
 RUN chmod +x /usr/bin/debug-php
 #COPY ../config/xdebug-php.ini $PHP_INI_DIR/conf.d/xdebug-php.ini
 
