@@ -46,13 +46,13 @@ RUN apt-get install --no-install-recommends -y \
     wget
 
 # PHP extensions
-RUN pecl install imagick memcached redis xdebug
+RUN pecl install imagick mcrypt memcached redis xdebug
 RUN docker-php-ext-enable imagick memcached redis xdebug
 
 RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl
 RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
 
-RUN docker-php-ext-install -j$(nproc) bcmath exif fileinfo gd intl imap mbstring mcrypt mysqli pdo pdo_mysql soap xmlrpc zip
+RUN docker-php-ext-install -j$(nproc) bcmath exif fileinfo gd intl imap mbstring mysqli pdo pdo_mysql soap xmlrpc zip
 
 RUN docker-php-ext-enable opcache
 
