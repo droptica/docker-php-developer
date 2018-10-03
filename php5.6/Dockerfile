@@ -15,9 +15,11 @@ ENV PATH "/composer/vendor/bin:$PATH"
 # Allow Composer to be run as root
 ENV COMPOSER_ALLOW_SUPERUSER 1
 
+# Install packages
 RUN apt-get update
 RUN apt-get dist-upgrade -y
 RUN apt-get install --no-install-recommends -y \
+    gnupg \
     python \
     python-pip \
     python-yaml \
@@ -41,11 +43,14 @@ RUN apt-get install --no-install-recommends -y \
     libldap2-dev \
     zlib1g-dev \
     mcrypt \
-    nodejs \
-    npm \
     git \
     unzip \
     wget
+
+# Add repo for NodeJS 8.x
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
+RUN apt-get update
+RUN apt-get install nodejs
 
 # PHP extensions
 RUN pecl install imagick memcached-2.2.0 redis xdebug
