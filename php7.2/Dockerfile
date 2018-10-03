@@ -41,6 +41,7 @@ RUN apt-get install --no-install-recommends -y \
     libldap2-dev \
     zlib1g-dev \
     mcrypt \
+    nodejs \
     git \
     unzip \
     wget
