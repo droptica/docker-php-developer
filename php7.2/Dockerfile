@@ -42,6 +42,7 @@ RUN apt-get install --no-install-recommends -y \
     zlib1g-dev \
     mcrypt \
     nodejs \
+    npm \
     git \
     unzip \
     wget
