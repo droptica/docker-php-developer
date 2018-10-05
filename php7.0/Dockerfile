@@ -48,7 +48,7 @@ RUN apt-get install --no-install-recommends -y \
     wget
 
 # Add repo for NodeJS 8.x
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
 RUN apt-get update
 RUN apt-get install nodejs
 
