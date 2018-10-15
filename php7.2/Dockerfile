@@ -75,7 +75,7 @@ RUN docker-php-ext-enable opcache
 RUN echo "date.timezone=${PHP_TIMEZONE:-UTC}" > $PHP_INI_DIR/conf.d/date_timezone.ini
 
 #DOCKER CONSOLE
-RUN pip install docker-console
+RUN pip install docker-console MySQL-python
 
 RUN git config --global alias.st status; \
   git config --global alias.ci commit; \
