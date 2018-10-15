@@ -22,6 +22,7 @@ RUN apt-get install --no-install-recommends -y \
     dirmngr \
     gnupg \
     python \
+    python-dev \
     python-pip \
     python-yaml \
     python-setuptools \
