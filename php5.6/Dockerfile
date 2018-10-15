@@ -32,7 +32,7 @@ RUN apt-get install --no-install-recommends -y \
     libc-client-dev \
     libkrb5-dev \
     libmemcached-dev \
-    libmysqlclient-dev \
+    libmariadbclient-dev \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
     libmagickwand-dev \
