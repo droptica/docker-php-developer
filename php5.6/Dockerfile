@@ -19,6 +19,7 @@ ENV COMPOSER_ALLOW_SUPERUSER 1
 RUN apt-get update
 RUN apt-get dist-upgrade -y
 RUN apt-get install --no-install-recommends -y \
+    dirmngr \
     gnupg \
     python \
     python-pip \
@@ -46,6 +47,11 @@ RUN apt-get install --no-install-recommends -y \
     git \
     unzip \
     wget
+
+RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /etc/apt/sources.list \
+    && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367 \
+    && apt-get -y update \
+    && apt-get -y install ansible
 
 # Add repo for NodeJS 8.x
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
