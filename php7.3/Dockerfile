@@ -1,4 +1,4 @@
-FROM php:7.1
+FROM php:7.3
 MAINTAINER Droptica <info@droptica.com>
 
 ENV DRUSH_VERSION 8.1.15
@@ -62,13 +62,13 @@ RUN apt-get update
 RUN apt-get install nodejs
 
 # PHP extensions
-RUN pecl install imagick memcached redis xdebug
+RUN pecl install imagick mcrypt memcached redis xdebug
 RUN docker-php-ext-enable imagick memcached redis xdebug
 
 RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl
 RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
 
-RUN docker-php-ext-install -j$(nproc) bcmath bz2 exif fileinfo gd intl imap mbstring mcrypt mysqli pdo pdo_mysql soap xmlrpc zip
+RUN docker-php-ext-install -j$(nproc) bcmath bz2 exif fileinfo gd intl imap mbstring mysqli pdo pdo_mysql soap xmlrpc zip
 
 RUN docker-php-ext-enable opcache
 

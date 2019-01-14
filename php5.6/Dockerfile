@@ -44,6 +44,7 @@ RUN apt-get install --no-install-recommends -y \
     libbz2-dev \
     libxslt-dev \
     libldap2-dev \
+    libzip-dev \
     zlib1g-dev \
     mcrypt \
     git \
