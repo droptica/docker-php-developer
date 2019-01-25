@@ -145,6 +145,9 @@ RUN chmod +x /usr/bin/debug-php
 RUN echo "source ~/.git-prompt.sh" >> /root/.bashrc
 RUN echo "alias ls='ls --color=auto'" >> /root/.bashrc
 
+# Create dedicated WWW user across all images
+RUN useradd -u 7000 -s /bin/false -d /var/www -c "Droptica dedicated www user" dropadmin
+
 # Cleaning
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 

@@ -148,6 +148,9 @@ RUN echo "alias ls='ls --color=auto'" >> /root/.bashrc
 # Cleaning
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+# Create dedicated WWW user across all images
+RUN useradd -u 7000 -s /bin/false -d /var/www -c "Droptica dedicated www user" dropadmin
+
 WORKDIR /app
 ENTRYPOINT []
 CMD ["bash"]
