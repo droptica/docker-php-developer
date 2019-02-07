@@ -25,6 +25,7 @@ RUN apt-get install --no-install-recommends -y \
     pkg-config \
     mysql-client \
     bash-completion \
+    httrack \
     imagemagick \
     libc-client-dev \
     libkrb5-dev \
@@ -43,7 +44,8 @@ RUN apt-get install --no-install-recommends -y \
     mcrypt \
     git \
     unzip \
-    wget
+    wget \
+    zip
 
 # PHP extensions
 RUN pecl install imagick memcached-2.2.0 redis xdebug
