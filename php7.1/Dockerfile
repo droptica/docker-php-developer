@@ -15,10 +15,14 @@ ENV PATH "/composer/vendor/bin:$PATH"
 # Allow Composer to be run as root
 ENV COMPOSER_ALLOW_SUPERUSER 1
 
+# Install packages
 RUN apt-get update
 RUN apt-get dist-upgrade -y
 RUN apt-get install --no-install-recommends -y \
+    dirmngr \
+    gnupg \
     python \
+    python-dev \
     python-pip \
     python-yaml \
     python-setuptools \
@@ -30,6 +34,7 @@ RUN apt-get install --no-install-recommends -y \
     libc-client-dev \
     libkrb5-dev \
     libmemcached-dev \
+    libmariadbclient-dev \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
     libmagickwand-dev \
@@ -40,12 +45,23 @@ RUN apt-get install --no-install-recommends -y \
     libbz2-dev \
     libxslt-dev \
     libldap2-dev \
+    libzip-dev \
     zlib1g-dev \
     mcrypt \
     git \
     unzip \
     wget \
     zip
+
+RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /etc/apt/sources.list \
+    && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367 \
+    && apt-get -y update \
+    && apt-get -y install ansible
+
+# Add repo for NodeJS 8.x
+RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
+RUN apt-get update
+RUN apt-get install nodejs
 
 # PHP extensions
 RUN pecl install imagick memcached redis xdebug
@@ -54,7 +70,7 @@ RUN docker-php-ext-enable imagick memcached redis xdebug
 RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl
 RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
 
-RUN docker-php-ext-install -j$(nproc) bcmath exif fileinfo gd intl imap mbstring mcrypt mysqli pdo pdo_mysql soap xmlrpc zip
+RUN docker-php-ext-install -j$(nproc) bcmath bz2 exif fileinfo gd intl imap mbstring mcrypt mysqli pdo pdo_mysql soap xmlrpc zip
 
 RUN docker-php-ext-enable opcache
 
@@ -62,7 +78,7 @@ RUN docker-php-ext-enable opcache
 RUN echo "date.timezone=${PHP_TIMEZONE:-UTC}" > $PHP_INI_DIR/conf.d/date_timezone.ini
 
 #DOCKER CONSOLE
-RUN pip install docker-console
+RUN pip install docker-console MySQL-python "python-dotenv[cli]"
 
 RUN git config --global alias.st status; \
   git config --global alias.ci commit; \
@@ -133,6 +149,9 @@ RUN echo "alias ls='ls --color=auto'" >> /root/.bashrc
 
 # Cleaning
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Create dedicated WWW user across all images
+RUN useradd -u 7000 -s /bin/false -d /var/www -c "Droptica dedicated www user" dropadmin
 
 WORKDIR /app
 ENTRYPOINT []

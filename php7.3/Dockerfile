@@ -1,4 +1,4 @@
-FROM php:7.2
+FROM php:7.3
 MAINTAINER Droptica <info@droptica.com>
 
 ENV DRUSH_VERSION 8.1.15
@@ -29,7 +29,6 @@ RUN apt-get install --no-install-recommends -y \
     pkg-config \
     mysql-client \
     bash-completion \
-    httrack \
     imagemagick \
     libc-client-dev \
     libkrb5-dev \
@@ -50,8 +49,7 @@ RUN apt-get install --no-install-recommends -y \
     mcrypt \
     git \
     unzip \
-    wget \
-    zip
+    wget
 
 RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /etc/apt/sources.list \
     && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367 \
