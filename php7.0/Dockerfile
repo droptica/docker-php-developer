@@ -126,6 +126,7 @@ RUN wget https://raw.githubusercontent.com/git/git/master/contrib/completion/git
 # Composer
 RUN wget https://getcomposer.org/download/${COMPOSER_VERSION}/composer.phar -O /usr/bin/composer && chmod +x /usr/bin/composer
 RUN mkdir /composer
+RUN composer global require hirak/prestissimo
 
 # Symfony console
 RUN wget https://symfony.com/installer -O /usr/bin/symfony && chmod +x /usr/bin/symfony
