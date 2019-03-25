@@ -1,7 +1,7 @@
 FROM php:7.0
 MAINTAINER Droptica <info@droptica.com>
 
-ENV DRUSH_VERSION 8.1.15
+ENV DRUSH_VERSION 8.2.1
 ENV COMPOSER_VERSION 1.8.3
 
 # Xdebug env variables

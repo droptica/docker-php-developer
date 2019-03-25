@@ -1,7 +1,7 @@
 FROM php:7.2
 MAINTAINER Droptica <info@droptica.com>
 
-ENV DRUSH_VERSION 8.1.15
+ENV DRUSH_VERSION 8.2.1
 ENV COMPOSER_VERSION 1.8.3
 
 # Xdebug env variables
@@ -53,10 +53,11 @@ RUN apt-get install --no-install-recommends -y \
     wget \
     zip
 
-RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /etc/apt/sources.list \
-    && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367 \
-    && apt-get -y update \
-    && apt-get -y install ansible
+# Disable while waiting for ansible8
+#RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /etc/apt/sources.list \
+#    && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367 \
+#    && apt-get -y update \
+#    && apt-get -y install ansible
 
 # Add repo for NodeJS 8.x
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
@@ -150,6 +151,11 @@ RUN echo "alias ls='ls --color=auto'" >> /root/.bashrc
 
 # Create dedicated WWW user across all images
 RUN useradd -u 7000 -s /bin/false -d /var/www -c "Droptica dedicated www user" dropadmin
+
+RUN apt-get install -y man
+RUN mkdir -p /usr/local/bin/ansible8
+RUN git clone http://github.com/ansible/ansible.git /usr/local/bin/ansible8
+RUN cd /usr/local/bin/ansible8 && sh ./hacking/env-setup -q && pip install -r ./requirements.txt
 
 # Cleaning
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
