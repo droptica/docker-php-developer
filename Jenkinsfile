@@ -7,6 +7,8 @@ node {
     def php71_tag
     def php72
     def php72_tag
+    def php73
+    def php73_tag
 
     stage('Clone repository') {
         /* Let's make sure we have the repository cloned to our workspace */
@@ -22,6 +24,7 @@ node {
         php70 = docker.build("droptica/php-dev:7.0-${env.BUILD_ID}", "--no-cache -f ./php7.0/Dockerfile .")
         php71 = docker.build("droptica/php-dev:7.1-${env.BUILD_ID}", "--no-cache -f ./php7.1/Dockerfile .")
         php72 = docker.build("droptica/php-dev:7.2-${env.BUILD_ID}", "--no-cache -f ./php7.2/Dockerfile .")
+        php73 = docker.build("droptica/php-dev:7.3-${env.BUILD_ID}", "--no-cache -f ./php7.3/Dockerfile .")
     }
 
     stage('Test image') {
@@ -29,7 +32,7 @@ node {
          * For this example, we're using a Volkswagen-type approach ;-) */
 
 
-        for (img in [ php56, php70, php71, php72 ]) {
+        for (img in [ php56, php70, php71, php72, php73 ]) {
             img.inside {
                 sh "echo 'Container available: ${img.id}'"
                 sh 'php -r "echo \'PHP is available\';"'
@@ -67,6 +70,13 @@ node {
                 returnStdout: true
             ).trim().replaceAll('PHP ', '').split(' ')[0]
         }
+
+        php73.inside{
+            php73_tag = sh (
+                script: 'php --version',
+                returnStdout: true
+            ).trim().replaceAll('PHP ', '').split(' ')[0]
+        }
     }
 
     stage('Push image') {
@@ -90,6 +100,10 @@ node {
             echo "Push: ${php72_tag}"
             php72.push("${php72_tag}")
             php72.push("7.2")
+
+            echo "Push: ${php73_tag}"
+            php73.push("${php73_tag}")
+            php73.push("7.3")
         }
     }
 }
