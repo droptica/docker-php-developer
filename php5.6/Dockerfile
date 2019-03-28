@@ -49,6 +49,7 @@ RUN apt-get install --no-install-recommends -y \
     zlib1g-dev \
     mcrypt \
     git \
+    rsync \
     unzip \
     wget \
     zip
