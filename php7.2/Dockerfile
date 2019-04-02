@@ -55,10 +55,10 @@ RUN apt-get install --no-install-recommends -y \
     zip
 
 # Disable while waiting for ansible8
-#RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /etc/apt/sources.list \
-#    && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367 \
-#    && apt-get -y update \
-#    && apt-get -y install ansible
+RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /etc/apt/sources.list \
+    && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367 \
+    && apt-get -y update \
+    && apt-get -y install ansible
 
 # Add repo for NodeJS 8.x
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
@@ -136,7 +136,7 @@ RUN wget https://symfony.com/installer -O /usr/bin/symfony && chmod +x /usr/bin/
 # Drush
 RUN wget https://github.com/drush-ops/drush/releases/download/${DRUSH_VERSION}/drush.phar -O /usr/bin/drush && chmod +x /usr/bin/drush && drush init -y
 
-#DRUPAL CONSOLE
+# Drupal console
 RUN wget https://drupalconsole.com/installer -O /usr/bin/drupal && chmod +x /usr/bin/drupal
 
 
@@ -152,11 +152,6 @@ RUN echo "alias ls='ls --color=auto'" >> /root/.bashrc
 
 # Create dedicated WWW user across all images
 RUN useradd -u 7000 -s /bin/false -d /var/www -c "Droptica dedicated www user" dropadmin
-
-RUN apt-get install -y man
-RUN mkdir -p /usr/local/bin/ansible8
-RUN git clone http://github.com/ansible/ansible.git /usr/local/bin/ansible8
-RUN cd /usr/local/bin/ansible8 && sh ./hacking/env-setup -q && pip install -r ./requirements.txt
 
 # Cleaning
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

@@ -135,7 +135,7 @@ RUN wget https://symfony.com/installer -O /usr/bin/symfony && chmod +x /usr/bin/
 # Drush
 RUN wget https://github.com/drush-ops/drush/releases/download/${DRUSH_VERSION}/drush.phar -O /usr/bin/drush && chmod +x /usr/bin/drush && drush init -y
 
-#DRUPAL CONSOLE
+# Drupal console
 RUN wget https://drupalconsole.com/installer -O /usr/bin/drupal && chmod +x /usr/bin/drupal
 
 
