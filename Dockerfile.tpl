@@ -86,14 +86,14 @@ COPY ./configs/php.ini ${PHP_INI_DIR}/conf.d/droptica-customs.ini
 # Composer
 RUN wget https://getcomposer.org/download/${COMPOSER_VERSION}/composer.phar -O /usr/bin/composer && chmod +x /usr/bin/composer
 RUN mkdir /composer
-RUN composer global require hirak/prestissimo
+#RUN composer global require hirak/prestissimo
 
 # Symfony console
 RUN wget https://symfony.com/installer -O /usr/bin/symfony && chmod +x /usr/bin/symfony
 
 # Drush
-RUN wget https://github.com/drush-ops/drush/releases/download/${DRUSH_9_VERSION}/drush.phar -O ~/drush-9 && chmod +x ~/drush-9
-RUN wget https://github.com/drush-ops/drush/releases/download/${DRUSH_8_VERSION}/drush.phar -O ~/drush-8 && chmod +x ~/drush-8
+RUN mkdir ~/drush-9 && cd ~/drush-9 composer require drush/drush-9
+RUN mkdir ~/drush-8 && cd ~/drush-8 composer require drush/drush-8
 
 # Drupal console
 RUN wget https://drupalconsole.com/installer -O /usr/bin/drupal && chmod +x /usr/bin/drupal
@@ -102,16 +102,13 @@ RUN wget https://drupalconsole.com/installer -O /usr/bin/drupal && chmod +x /usr
 COPY ./configs/debug-php /usr/bin/debug-php
 RUN chmod +x /usr/bin/debug-php
 
-COPY ./config/xdebug-php.ini $PHP_INI_DIR/conf.d/xdebug-php.ini
+COPY ./configs/xdebug-php.ini $PHP_INI_DIR/conf.d/xdebug-php.ini.back
 
-COPY ./config/versions /usr/bin/versions
+COPY ./configs/versions /usr/bin/versions
 RUN chmod +x /usr/bin/versions
 
 RUN git clone https://github.com/magicmonty/bash-git-prompt.git ~/.bash-git-prompt --depth=1
-RUN "if [ -f \"\$HOME/.bash-git-prompt/gitprompt.sh\" ]; then \
-         GIT_PROMPT_ONLY_IN_REPO=1 \
-         source \$HOME/.bash-git-prompt/gitprompt.sh \
-     fi" >> ~/.bashrc
+RUN echo "if [ -f \"\$HOME/.bash-git-prompt/gitprompt.sh\" ]; then \n GIT_PROMPT_ONLY_IN_REPO=1 \n  source \$HOME/.bash-git-prompt/gitprompt.sh \n fi" >> ~/.bashrc
 
 # Create dedicated WWW user across all images
 RUN useradd -u 7000 -s /bin/false -d /var/www -c "Droptica dedicated www user" dropadmin
@@ -135,7 +132,7 @@ ENV PHP_ERROR_REPORTING "E_ALL"
 
 WORKDIR /app
 
-ADD ./configs/entrypoint.sh /bin/entrypoint.sh
+COPY ./configs/entrypoint.sh /bin/entrypoint.sh
 
 ENTRYPOINT ["entrypoint.sh"]
 
