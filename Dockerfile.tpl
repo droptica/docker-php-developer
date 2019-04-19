@@ -86,14 +86,17 @@ COPY ./configs/php.ini ${PHP_INI_DIR}/conf.d/droptica-customs.ini
 # Composer
 RUN wget https://getcomposer.org/download/${COMPOSER_VERSION}/composer.phar -O /usr/bin/composer && chmod +x /usr/bin/composer
 RUN mkdir /composer
-#RUN composer global require hirak/prestissimo
+RUN composer global require hirak/prestissimo
 
 # Symfony console
 RUN wget https://symfony.com/installer -O /usr/bin/symfony && chmod +x /usr/bin/symfony
 
 # Drush
-RUN mkdir ~/drush-9 && cd ~/drush-9 composer require drush/drush-9
-RUN mkdir ~/drush-8 && cd ~/drush-8 composer require drush/drush-8
+RUN mkdir ~/drush-8 && cd ~/drush-8 && composer require drush/drush:${DRUSH_8_VERSION}
+
+RUN mkdir ~/drush-9 && cd ~/drush-9 && composer require drush/drush:${DRUSH_9_VERSION}
+
+
 
 # Drupal console
 RUN wget https://drupalconsole.com/installer -O /usr/bin/drupal && chmod +x /usr/bin/drupal
@@ -133,6 +136,7 @@ ENV PHP_ERROR_REPORTING "E_ALL"
 WORKDIR /app
 
 COPY ./configs/entrypoint.sh /bin/entrypoint.sh
+RUN chmod +x /bin/entrypoint.sh
 
 ENTRYPOINT ["entrypoint.sh"]
 
