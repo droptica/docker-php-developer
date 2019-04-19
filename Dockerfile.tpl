@@ -1,8 +1,9 @@
-FROM php:7.3
+FROM php:${PHP_VERSION}
 MAINTAINER Droptica <info@droptica.com>
 
-ENV DRUSH_VERSION 8.2.1
-ENV COMPOSER_VERSION 1.8.3
+ENV DRUSH_8_VERSION ${DRUSH_8_VER}
+ENV DRUSH_9_VERSION ${DRUSH_9_VER}
+ENV COMPOSER_VERSION ${COMPOSER_VER}
 
 # Xdebug env variables
 ENV XDEBUG_CONFIG "idekey=phpstorm"
@@ -65,8 +66,8 @@ RUN apt-get update
 RUN apt-get install nodejs
 
 # PHP extensions
-RUN pecl install imagick mcrypt memcached redis xdebug
-RUN docker-php-ext-enable imagick memcached redis xdebug
+RUN pecl install imagick mcrypt memcached${MEMCACHED_VERSION} redis xdebug${XDEBUG_VERSION}
+RUN docker-php-ext-enable imagick memcached redis
 
 RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl
 RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
@@ -75,54 +76,12 @@ RUN docker-php-ext-install -j$(nproc) bcmath bz2 exif fileinfo gd intl imap mbst
 
 RUN docker-php-ext-enable opcache
 
-# Time Zone
-RUN echo "date.timezone=${PHP_TIMEZONE:-UTC}" > $PHP_INI_DIR/conf.d/date_timezone.ini
 
 #DOCKER CONSOLE
 RUN pip install docker-console MySQL-python "python-dotenv[cli]"
 
-RUN git config --global alias.st status; \
-  git config --global alias.ci commit; \
-  git config --global alias.br branch; \
-  git config --global alias.co checkout; \
-  git config --global alias.df diff; \
-  git config --global alias.lg "log --graph --pretty=format:'%C(blue)%h %Creset%C(reverse bold blue)%d%Creset %C(white)%s %C(green bold)%cr%Creset %C(green)%aN' --abbrev-commit --decorate"; \
-  git config --global alias.clear '!git add -A && git reset --hard'; \
-  git config --global alias.unstage "reset HEAD --"; \
-  git config --global alias.ign "ls-files -o -i --exclude-standard"; \
-  git config --global alias.gitkconflict '!gitk --left-right HEAD...MERGE_HEAD'; \
-  git config --global alias.alias "config --get-regexp alias"; \
-  git config --global apply.whitespace error-all; \
-  git config --global color.ui auto; \
-  git config --global color.diff.whitespace "red reverse"; \
-  git config --global color.diff.meta "magenta"; \
-  git config --global color.diff.frag "yellow"; \
-  git config --global color.diff.old "red"; \
-  git config --global color.diff.new "green bold"; \
-  git config --global color.grep.context yellow; \
-  git config --global color.grep.filename blue; \
-  git config --global color.grep.function "yellow bold"; \
-  git config --global color.grep.linenumber "cyan bold"; \
-  git config --global color.grep.match red bold; \
-  git config --global color.grep.selected white; \
-  git config --global color.grep.separator blue; \
-  git config --global color.status.added yellow; \
-  git config --global color.status.changed red; \
-  git config --global color.status.untracked "cyan bold"; \
-  git config --global diff.tool meld; \
-  git config --global instaweb.httpd 'apache2'; \
-  git config --global merge.summary true; \
-  git config --global merge.tool meld;
-
-#
-# Additional scripts and settings
-#
-
 # Custom php.ini
 COPY ./configs/php.ini ${PHP_INI_DIR}/conf.d/droptica-customs.ini
-
-# Bash git prompt
-RUN wget https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh -O /root/.git-prompt.sh && chmod +x /root/.git-prompt.sh
 
 # Composer
 RUN wget https://getcomposer.org/download/${COMPOSER_VERSION}/composer.phar -O /usr/bin/composer && chmod +x /usr/bin/composer
@@ -133,7 +92,8 @@ RUN composer global require hirak/prestissimo
 RUN wget https://symfony.com/installer -O /usr/bin/symfony && chmod +x /usr/bin/symfony
 
 # Drush
-RUN wget https://github.com/drush-ops/drush/releases/download/${DRUSH_VERSION}/drush.phar -O /usr/bin/drush && chmod +x /usr/bin/drush && drush init -y
+RUN wget https://github.com/drush-ops/drush/releases/download/${DRUSH_9_VERSION}/drush.phar -O ~/drush-9 && chmod +x ~/drush-9
+RUN wget https://github.com/drush-ops/drush/releases/download/${DRUSH_8_VERSION}/drush.phar -O ~/drush-8 && chmod +x ~/drush-8
 
 # Drupal console
 RUN wget https://drupalconsole.com/installer -O /usr/bin/drupal && chmod +x /usr/bin/drupal
@@ -141,13 +101,17 @@ RUN wget https://drupalconsole.com/installer -O /usr/bin/drupal && chmod +x /usr
 
 COPY ./configs/debug-php /usr/bin/debug-php
 RUN chmod +x /usr/bin/debug-php
-#COPY ../config/xdebug-php.ini $PHP_INI_DIR/conf.d/xdebug-php.ini
 
-#COPY ../config/versions /usr/bin/versions
-#RUN chmod +x /usr/bin/versions
+COPY ./config/xdebug-php.ini $PHP_INI_DIR/conf.d/xdebug-php.ini
 
-RUN echo "source ~/.git-prompt.sh" >> /root/.bashrc
-RUN echo "alias ls='ls --color=auto'" >> /root/.bashrc
+COPY ./config/versions /usr/bin/versions
+RUN chmod +x /usr/bin/versions
+
+RUN git clone https://github.com/magicmonty/bash-git-prompt.git ~/.bash-git-prompt --depth=1
+RUN "if [ -f \"\$HOME/.bash-git-prompt/gitprompt.sh\" ]; then \
+         GIT_PROMPT_ONLY_IN_REPO=1 \
+         source \$HOME/.bash-git-prompt/gitprompt.sh \
+     fi" >> ~/.bashrc
 
 # Create dedicated WWW user across all images
 RUN useradd -u 7000 -s /bin/false -d /var/www -c "Droptica dedicated www user" dropadmin
@@ -155,6 +119,24 @@ RUN useradd -u 7000 -s /bin/false -d /var/www -c "Droptica dedicated www user" d
 # Cleaning
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+ENV PHP_TIMEZIONE UTC
+ENV PHP_MAX_EXECUTION_TIME -1
+ENV PHP_MAX_UPLOAD_FILE_SIZE 100G
+ENV PHP_MAX_POST_SIZE 100G
+ENV PHP_DISPLAY_ERRORS 1
+ENV PHP_DISPLAY_STARTUP_ERRORS 1
+ENV PHP_EXPOSE 0
+ENV PHP_DISABLED_FUNCTIONS ""
+ENV PHP_MAX_INPUT_VARS 10000
+ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS 0
+ENV PHP_MEMORY_LIMIT -1
+ENV PHP_ERROR_REPORTING "E_ALL"
+
+
 WORKDIR /app
-ENTRYPOINT []
+
+ADD ./configs/entrypoint.sh /bin/entrypoint.sh
+
+ENTRYPOINT ["entrypoint.sh"]
+
 CMD ["bash"]
