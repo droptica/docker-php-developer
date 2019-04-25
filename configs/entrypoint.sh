@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if [[ ! -z ${DRUSH-9+x} ]]; then
+if [[ -z ${DRUSH-9+x} ]]; then
     export PATH="/root/drush-9/vendor/bin:${PATH}"
 else
     export PATH="/root/drush-8/vendor/bin:${PATH}"
