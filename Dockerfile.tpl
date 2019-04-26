@@ -96,7 +96,7 @@ RUN mkdir ~/drush-8 && cd ~/drush-8 && composer require drush/drush:${DRUSH_8_VE
 
 RUN mkdir ~/drush-9 && cd ~/drush-9 && composer require drush/drush:${DRUSH_9_VERSION}
 
-
+ENV PATH "/root/drush-8/vendor/bin:${PATH}"
 
 # Drupal console
 RUN wget https://drupalconsole.com/installer -O /usr/bin/drupal && chmod +x /usr/bin/drupal
