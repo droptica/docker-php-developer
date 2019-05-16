@@ -111,7 +111,7 @@ COPY ./configs/versions /usr/bin/versions
 RUN chmod +x /usr/bin/versions
 
 RUN git clone https://github.com/magicmonty/bash-git-prompt.git ~/.bash-git-prompt --depth=1
-RUN echo "if [ -f \"\$HOME/.bash-git-prompt/gitprompt.sh\" ]; then \n GIT_PROMPT_ONLY_IN_REPO=1 \n  source \$HOME/.bash-git-prompt/gitprompt.sh \n fi" >> ~/.bashrc
+RUN printf "if [ -f \"\$HOME/.bash-git-prompt/gitprompt.sh\" ]; then \n GIT_PROMPT_ONLY_IN_REPO=1 \n  source \$HOME/.bash-git-prompt/gitprompt.sh \n fi" >> ~/.bashrc
 
 # Create dedicated WWW user across all images
 RUN useradd -u 7000 -s /bin/false -d /var/www -c "Droptica dedicated www user" dropadmin
