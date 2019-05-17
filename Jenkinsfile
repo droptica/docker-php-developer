@@ -1,6 +1,4 @@
 node {
-    def php56
-    def php56_tag
     def php70
     def php70_tag
     def php71
@@ -20,11 +18,29 @@ node {
         /* This builds the actual image; synonymous to
          * docker build on the command line */
 
-        php56 = docker.build("droptica/php-dev:5.6-${env.BUILD_ID}", "--no-cache -f ./php5.6/Dockerfile .")
-        php70 = docker.build("droptica/php-dev:7.0-${env.BUILD_ID}", "--no-cache -f ./php7.0/Dockerfile .")
-        php71 = docker.build("droptica/php-dev:7.1-${env.BUILD_ID}", "--no-cache -f ./php7.1/Dockerfile .")
-        php72 = docker.build("droptica/php-dev:7.2-${env.BUILD_ID}", "--no-cache -f ./php7.2/Dockerfile .")
-        php73 = docker.build("droptica/php-dev:7.3-${env.BUILD_ID}", "--no-cache -f ./php7.3/Dockerfile .")
+        withEnv(['DRUSH_9_VER=9.6.2']) {
+
+        withEnv(['PHP_VERSION=7.0']) {
+            sh 'envsubst \'${PHP_VERSION}\' < Dockerfile.tpl > Dockerfile'
+            php70 = docker.build("droptica/php-fpm:7.0-${env.BUILD_ID}", "--no-cache -f ./Dockerfile .")
+        }
+
+        withEnv(['PHP_VERSION=7.1']) {
+            sh 'envsubst \'${PHP_VERSION}\' < Dockerfile.tpl > Dockerfile'
+            php71 = docker.build("droptica/php-fpm:7.1-${env.BUILD_ID}", "--no-cache -f ./Dockerfile .")
+        }
+
+        withEnv(['PHP_VERSION=7.2']) {
+            sh 'envsubst \'${PHP_VERSION}\' < Dockerfile.tpl > Dockerfile'
+            php72 = docker.build("droptica/php-fpm:7.2-${env.BUILD_ID}", "--no-cache -f ./Dockerfile .")
+        }
+
+        withEnv(['PHP_VERSION=7.3']) {
+            sh 'envsubst \'${PHP_VERSION}\' < Dockerfile.tpl > Dockerfile'
+            php73 = docker.build("droptica/php-fpm:7.3-${env.BUILD_ID}", "--no-cache -f ./Dockerfile .")
+        }
+
+        }
     }
 
     stage('Test image') {
@@ -32,7 +48,7 @@ node {
          * For this example, we're using a Volkswagen-type approach ;-) */
 
 
-        for (img in [ php56, php70, php71, php72, php73 ]) {
+        for (img in [ php70, php71, php72, php73 ]) {
             img.inside {
                 sh "echo 'Container available: ${img.id}'"
                 sh 'php -r "echo \'PHP is available\';"'
@@ -42,13 +58,6 @@ node {
     }
 
     stage('Set tags') {
-
-        php56.inside{
-            php56_tag = sh (
-                script: 'php --version',
-                returnStdout: true
-            ).trim().replaceAll('PHP ', '').split(' ')[0]
-        }
 
         php70.inside{
             php70_tag = sh (
@@ -85,10 +94,6 @@ node {
          * Second, the 'latest' tag.
          * Pushing multiple tags is cheap, as all the layers are reused. */
         docker.withRegistry('https://registry.hub.docker.com', 'hub.docker.com') {
-            echo "Push: ${php56_tag}"
-            php56.push("${php56_tag}")
-            php56.push("5.6")
-
             echo "Push: ${php70_tag}"
             php70.push("${php70_tag}")
             php70.push("7.0")
