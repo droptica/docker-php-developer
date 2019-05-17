@@ -22,22 +22,22 @@ node {
 
             withEnv(['PHP_VERSION=7.0']) {
                 sh 'envsubst \'${PHP_VERSION},${DRUSH_9_VER},${DRUSH_8_VER},${COMPOSER_VER}\' < Dockerfile.tpl > Dockerfile'
-                php70 = docker.build("droptica/php-fpm:7.0-${env.BUILD_ID}", "--no-cache -f ./Dockerfile .")
+                php70 = docker.build("droptica/php-dev:7.0-${env.BUILD_ID}", "--no-cache -f ./Dockerfile .")
             }
 
             withEnv(['PHP_VERSION=7.1']) {
                 sh 'envsubst \'${PHP_VERSION},${DRUSH_9_VER},${DRUSH_8_VER},${COMPOSER_VER}\' < Dockerfile.tpl > Dockerfile'
-                php71 = docker.build("droptica/php-fpm:7.1-${env.BUILD_ID}", "--no-cache -f ./Dockerfile .")
+                php71 = docker.build("droptica/php-dev:7.1-${env.BUILD_ID}", "--no-cache -f ./Dockerfile .")
             }
 
             withEnv(['PHP_VERSION=7.2']) {
                 sh 'envsubst \'${PHP_VERSION},${DRUSH_9_VER},${DRUSH_8_VER},${COMPOSER_VER}\' < Dockerfile.tpl > Dockerfile'
-                php72 = docker.build("droptica/php-fpm:7.2-${env.BUILD_ID}", "--no-cache -f ./Dockerfile .")
+                php72 = docker.build("droptica/php-dev:7.2-${env.BUILD_ID}", "--no-cache -f ./Dockerfile .")
             }
 
             withEnv(['PHP_VERSION=7.3']) {
                 sh 'envsubst \'${PHP_VERSION},${DRUSH_9_VER},${DRUSH_8_VER},${COMPOSER_VER}\' < Dockerfile.tpl > Dockerfile'
-                php73 = docker.build("droptica/php-fpm:7.3-${env.BUILD_ID}", "--no-cache -f ./Dockerfile .")
+                php73 = docker.build("droptica/php-dev:7.3-${env.BUILD_ID}", "--no-cache -f ./Dockerfile .")
             }
 
         }
