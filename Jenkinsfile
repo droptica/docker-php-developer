@@ -18,27 +18,27 @@ node {
         /* This builds the actual image; synonymous to
          * docker build on the command line */
 
-        withEnv(['DRUSH_9_VER=9.6.2']) {
+        withEnv(['DRUSH_9_VER=9.6.2', 'DRUSH_8_VER=8.2.3', 'COMPOSER_VER=1.8.5']) {
 
-        withEnv(['PHP_VERSION=7.0']) {
-            sh 'envsubst \'${PHP_VERSION}\' < Dockerfile.tpl > Dockerfile'
-            php70 = docker.build("droptica/php-fpm:7.0-${env.BUILD_ID}", "--no-cache -f ./Dockerfile .")
-        }
+            withEnv(['PHP_VERSION=7.0']) {
+                sh 'envsubst \'${PHP_VERSION}\' < Dockerfile.tpl > Dockerfile'
+                php70 = docker.build("droptica/php-fpm:7.0-${env.BUILD_ID}", "--no-cache -f ./Dockerfile .")
+            }
 
-        withEnv(['PHP_VERSION=7.1']) {
-            sh 'envsubst \'${PHP_VERSION}\' < Dockerfile.tpl > Dockerfile'
-            php71 = docker.build("droptica/php-fpm:7.1-${env.BUILD_ID}", "--no-cache -f ./Dockerfile .")
-        }
+            withEnv(['PHP_VERSION=7.1']) {
+                sh 'envsubst \'${PHP_VERSION}\' < Dockerfile.tpl > Dockerfile'
+                php71 = docker.build("droptica/php-fpm:7.1-${env.BUILD_ID}", "--no-cache -f ./Dockerfile .")
+            }
 
-        withEnv(['PHP_VERSION=7.2']) {
-            sh 'envsubst \'${PHP_VERSION}\' < Dockerfile.tpl > Dockerfile'
-            php72 = docker.build("droptica/php-fpm:7.2-${env.BUILD_ID}", "--no-cache -f ./Dockerfile .")
-        }
+            withEnv(['PHP_VERSION=7.2']) {
+                sh 'envsubst \'${PHP_VERSION}\' < Dockerfile.tpl > Dockerfile'
+                php72 = docker.build("droptica/php-fpm:7.2-${env.BUILD_ID}", "--no-cache -f ./Dockerfile .")
+            }
 
-        withEnv(['PHP_VERSION=7.3']) {
-            sh 'envsubst \'${PHP_VERSION}\' < Dockerfile.tpl > Dockerfile'
-            php73 = docker.build("droptica/php-fpm:7.3-${env.BUILD_ID}", "--no-cache -f ./Dockerfile .")
-        }
+            withEnv(['PHP_VERSION=7.3']) {
+                sh 'envsubst \'${PHP_VERSION}\' < Dockerfile.tpl > Dockerfile'
+                php73 = docker.build("droptica/php-fpm:7.3-${env.BUILD_ID}", "--no-cache -f ./Dockerfile .")
+            }
 
         }
     }
