@@ -86,7 +86,7 @@ COPY ./configs/php.ini ${PHP_INI_DIR}/conf.d/droptica-customs.ini
 # Composer
 RUN wget https://getcomposer.org/download/${COMPOSER_VERSION}/composer.phar -O /usr/bin/composer && chmod +x /usr/bin/composer
 RUN mkdir /composer
-RUN composer global require hirak/prestissimo
+RUN composer -vvv global require hirak/prestissimo 1>&2
 
 # Symfony console
 RUN wget https://symfony.com/installer -O /usr/bin/symfony && chmod +x /usr/bin/symfony
