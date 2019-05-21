@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+HOST_IP=`/sbin/ip route|awk '/default/ { print $3 }'`
+
+docker-php-ext-enable xdebug
+
+cp ${PHP_INI_DIR}/conf.d/xdebug-php.ini.back ${PHP_INI_DIR}/conf.d/xdebug-php.ini
+
+echo "xdebug.remote_host=$HOST_IP" >> ${PHP_INI_DIR}/conf.d/xdebug-php.ini
+
+
+php $@
