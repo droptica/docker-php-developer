@@ -1,4 +1,4 @@
-FROM php:${PHP_VERSION}-alpine
+FROM php:${PHP_VERSION}
 MAINTAINER Droptica <info@droptica.com>
 
 ENV DRUSH_8_VERSION ${DRUSH_8_VER}
