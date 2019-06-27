@@ -1,4 +1,4 @@
-FROM php:${PHP_VERSION}
+FROM php:${PHP_VERSION}-alpine
 MAINTAINER Droptica <info@droptica.com>
 
 ENV DRUSH_8_VERSION ${DRUSH_8_VER}
@@ -34,6 +34,7 @@ ENV COMPOSER_ALLOW_SUPERUSER 1
 RUN apt-get update
 RUN apt-get dist-upgrade -y
 RUN apt-get install --no-install-recommends -y \
+    acl \
     dirmngr \
     gnupg \
     python \
