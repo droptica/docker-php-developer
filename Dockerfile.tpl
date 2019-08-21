@@ -81,7 +81,7 @@ RUN apt-get update
 RUN apt-get install nodejs
 
 # PHP extensions
-RUN pecl install imagick mcrypt memcached${MEMCACHED_VERSION} redis xdebug${XDEBUG_VERSION}
+RUN pecl install imagick mcrypt memcached${MEMCACHED_VERSION} redis${REDIS_VERSION} xdebug${XDEBUG_VERSION}
 RUN docker-php-ext-enable imagick memcached redis
 
 RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl
