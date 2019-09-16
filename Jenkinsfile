@@ -1,6 +1,4 @@
 node {
-    def php56
-    def php56_tag
     def php70
     def php70_tag
     def php71
@@ -20,13 +18,7 @@ node {
         /* This builds the actual image; synonymous to
          * docker build on the command line */
 
-        withEnv(['DRUSH_9_VER=9.6.2', 'DRUSH_8_VER=8.2.3', 'COMPOSER_VER=1.8.5']) {
-
-            withEnv(['PHP_VERSION=5.6', 'MEMCACHED_VERSION=-2.2.0', 'XDEBUG_VERSION=-2.5.5']) {
-                sh 'envsubst \'${PHP_VERSION},${DRUSH_9_VER},${DRUSH_8_VER},${COMPOSER_VER},${MEMCACHED_VERSION},${XDEBUG_VERSION}\' < Dockerfile.tpl > Dockerfile'
-                sh 'cat Dockerfile'
-                php56 = docker.build("droptica/php-dev:5.6-${env.BUILD_ID}", "--no-cache -f ./Dockerfile .")
-            }
+        withEnv(['DRUSH_9_VER=9.6.2', 'DRUSH_8_VER=8.2.3', 'COMPOSER_VER=1.8.5', 'REDIS_VERSION="-4.3.0"']) {
 
             withEnv(['PHP_VERSION=7.0']) {
                 sh 'envsubst \'${PHP_VERSION},${DRUSH_9_VER},${DRUSH_8_VER},${COMPOSER_VER}\' < Dockerfile.tpl > Dockerfile'
@@ -56,7 +48,7 @@ node {
          * For this example, we're using a Volkswagen-type approach ;-) */
 
 
-        for (img in [ php56, php70, php71, php72, php73 ]) {
+        for (img in [ php70, php71, php72, php73 ]) {
             img.inside {
                 sh "echo 'Container available: ${img.id}'"
                 sh 'php -r "echo \'PHP is available\';"'
@@ -66,13 +58,6 @@ node {
     }
 
     stage('Set tags') {
-
-        php56.inside{
-            php56_tag = sh (
-                script: 'php --version',
-                returnStdout: true
-            ).trim().replaceAll('PHP ', '').split(' ')[0]
-        }
 
         php70.inside{
             php70_tag = sh (
@@ -109,9 +94,6 @@ node {
          * Second, the 'latest' tag.
          * Pushing multiple tags is cheap, as all the layers are reused. */
         docker.withRegistry('https://registry.hub.docker.com', 'hub.docker.com') {
-            echo "Push: ${php56_tag}"
-            php56.push("${php56_tag}")
-            php56.push("5.6")
 
             echo "Push: ${php70_tag}"
             php70.push("${php70_tag}")
