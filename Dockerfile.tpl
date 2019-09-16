@@ -94,7 +94,7 @@ RUN docker-php-ext-enable opcache
 
 #DOCKER CONSOLE
 RUN ln -s /usr/bin/mariadb_config /usr/bin/mysql_config
-RUN pip install docker-console MySQL-python "python-dotenv[cli]"
+RUN pip install docker-console "python-dotenv[cli]"
 
 # Custom php.ini
 COPY ./configs/php.ini ${PHP_INI_DIR}/conf.d/droptica-customs.ini
