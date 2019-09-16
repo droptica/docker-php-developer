@@ -68,6 +68,7 @@ RUN apt-get install --no-install-recommends -y \
     rsync \
     unzip \
     wget \
+    yarn \
     zip
 
 RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /etc/apt/sources.list \
