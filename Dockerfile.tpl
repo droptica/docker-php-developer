@@ -92,7 +92,6 @@ RUN docker-php-ext-install -j$(nproc) bcmath bz2 exif fileinfo gd intl imap mbst
 
 RUN docker-php-ext-enable opcache
 
-
 #DOCKER CONSOLE
 RUN pip install docker-console MySQL-python "python-dotenv[cli]"
 

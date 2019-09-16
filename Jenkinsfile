@@ -1,6 +1,4 @@
 node {
-    def php70
-    def php70_tag
     def php71
     def php71_tag
     def php72
@@ -19,11 +17,6 @@ node {
          * docker build on the command line */
 
         withEnv(['DRUSH_9_VER=9.6.2', 'DRUSH_8_VER=8.2.3', 'COMPOSER_VER=1.8.5', 'REDIS_VERSION="-4.3.0"']) {
-
-            withEnv(['PHP_VERSION=7.0']) {
-                sh 'envsubst \'${PHP_VERSION},${DRUSH_9_VER},${DRUSH_8_VER},${COMPOSER_VER}\' < Dockerfile.tpl > Dockerfile'
-                php70 = docker.build("droptica/php-dev:7.0-${env.BUILD_ID}", "--no-cache -f ./Dockerfile .")
-            }
 
             withEnv(['PHP_VERSION=7.1']) {
                 sh 'envsubst \'${PHP_VERSION},${DRUSH_9_VER},${DRUSH_8_VER},${COMPOSER_VER}\' < Dockerfile.tpl > Dockerfile'
@@ -48,7 +41,7 @@ node {
          * For this example, we're using a Volkswagen-type approach ;-) */
 
 
-        for (img in [ php70, php71, php72, php73 ]) {
+        for (img in [ php71, php72, php73 ]) {
             img.inside {
                 sh "echo 'Container available: ${img.id}'"
                 sh 'php -r "echo \'PHP is available\';"'
@@ -58,13 +51,6 @@ node {
     }
 
     stage('Set tags') {
-
-        php70.inside{
-            php70_tag = sh (
-                script: 'php --version',
-                returnStdout: true
-            ).trim().replaceAll('PHP ', '').split(' ')[0]
-        }
 
         php71.inside{
             php71_tag = sh (
@@ -94,10 +80,6 @@ node {
          * Second, the 'latest' tag.
          * Pushing multiple tags is cheap, as all the layers are reused. */
         docker.withRegistry('https://registry.hub.docker.com', 'hub.docker.com') {
-
-            echo "Push: ${php70_tag}"
-            php70.push("${php70_tag}")
-            php70.push("7.0")
 
             echo "Push: ${php71_tag}"
             php71.push("${php71_tag}")

@@ -12,7 +12,7 @@ docker build -t droptica/php-dev:${PHP_VERSION} .
 
 export MEMCACHED_VERSION=''
 export XDEBUG_VERSION=''
-for i in $(seq 0 3); do
+for i in $(seq 1 3); do
     export PHP_VERSION=7.${i}
     envsubst '${DRUSH_9_VER},${DRUSH_8_VER},${COMPOSER_VER},${PHP_VERSION},${MEMCACHED_VERSION}${XDEBUG_VERSION}' < Dockerfile.tpl > Dockerfile
     docker build -t droptica/php-dev:${PHP_VERSION} .
