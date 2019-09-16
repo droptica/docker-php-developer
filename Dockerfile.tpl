@@ -93,6 +93,7 @@ RUN docker-php-ext-install -j$(nproc) bcmath bz2 exif fileinfo gd intl imap mbst
 RUN docker-php-ext-enable opcache
 
 #DOCKER CONSOLE
+RUN ln -s /usr/bin/mariadb_config /usr/bin/mysql_config
 RUN pip install docker-console MySQL-python "python-dotenv[cli]"
 
 # Custom php.ini
