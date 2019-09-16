@@ -43,7 +43,7 @@ RUN apt-get install --no-install-recommends -y \
     python-yaml \
     python-setuptools \
     pkg-config \
-    mysql-client \
+    mariadb-client \
     bash-completion \
     httrack \
     imagemagick \
