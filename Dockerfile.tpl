@@ -86,7 +86,7 @@ RUN curl -sL https://npmjs.org/install.sh | bash -
 
 # PHP extensions
 RUN pecl install imagick mcrypt-1.0.2 memcached${MEMCACHED_VERSION} redis${REDIS_VERSION} xdebug${XDEBUG_VERSION}
-RUN docker-php-ext-enable imagick mcrypt memcached redis
+RUN docker-php-ext-enable imagick memcached redis
 
 RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl
 RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
