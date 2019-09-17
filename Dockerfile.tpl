@@ -78,7 +78,7 @@ RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /e
 
 # Add repo for NodeJS 8.x
 #RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
-RUN curl -sL https://npmjs.org/install.sh | sudo sh
+RUN curl -sL https://npmjs.org/install.sh | bash -
 #RUN apt-get update
 #RUN apt-get -y install nodejs
 
