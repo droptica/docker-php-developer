@@ -77,10 +77,12 @@ RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /e
     && apt-get -y install ansible
 
 # Add repo for NodeJS 8.x
-#RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
+RUN apt-get update
+RUN apt-get -y install nodejs
+
+# Install npm
 RUN curl -sL https://npmjs.org/install.sh | bash -
-#RUN apt-get update
-#RUN apt-get -y install nodejs
 
 # PHP extensions
 RUN pecl install imagick mcrypt-1.0.2 memcached${MEMCACHED_VERSION} redis${REDIS_VERSION} xdebug${XDEBUG_VERSION}
