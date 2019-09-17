@@ -54,21 +54,21 @@ node {
 
         php71.inside{
             php71_tag = sh (
-                script: 'php --version 2>/dev/null',
+                script: 'php --version 2>&1 | grep -v Warn',
                 returnStdout: true
             ).trim().replaceAll('PHP ', '').split(' ')[0]
         }
 
         php72.inside{
             php72_tag = sh (
-                script: 'php --version 2>/dev/null',
+                script: 'php --version 2>&1 | grep -v Warn',
                 returnStdout: true
             ).trim().replaceAll('PHP ', '').split(' ')[0]
         }
 
         php73.inside{
             php73_tag = sh (
-                script: 'php --version 2>/dev/null',
+                script: 'php --version 2>&1 | grep -v Warn',
                 returnStdout: true
             ).trim().replaceAll('PHP ', '').split(' ')[0]
         }
