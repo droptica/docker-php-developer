@@ -48,7 +48,7 @@ RUN apt-get install --no-install-recommends -y \
     httrack \
     imagemagick \
     libc-client-dev \
-    libkrb5-dev \
+	    libkrb5-dev \
     libmemcached-dev \
     libmariadbclient-dev \
     libfreetype6-dev \
@@ -94,7 +94,7 @@ RUN docker-php-ext-enable opcache
 
 #DOCKER CONSOLE
 RUN ln -s /usr/bin/mariadb_config /usr/bin/mysql_config
-RUN pip install docker-console "python-dotenv[cli]"
+RUN pip install docker-console "python-dotenv[cli]" pymysql
 
 # Custom php.ini
 COPY ./configs/php.ini ${PHP_INI_DIR}/conf.d/droptica-customs.ini
