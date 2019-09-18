@@ -74,7 +74,7 @@ RUN apt-get install --no-install-recommends -y \
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
 
 # Add repo for yarn
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
     && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
 
 RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /etc/apt/sources.list \
