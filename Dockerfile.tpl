@@ -1,8 +1,8 @@
-FROM php:${PHP_VERSION}
+FROM php:${PHP_VERSION}-cli
 MAINTAINER Droptica <info@droptica.com>
 
-ENV DRUSH_8_VERSION ${DRUSH_8_VER}
-ENV DRUSH_9_VERSION ${DRUSH_9_VER}
+ENV DRUSH_8_VERSION  ${DRUSH_8_VER}
+ENV DRUSH_9_VERSION  ${DRUSH_9_VER}
 ENV COMPOSER_VERSION ${COMPOSER_VER}
 
 # Default PHP settings
@@ -48,7 +48,7 @@ RUN apt-get install --no-install-recommends -y \
     httrack \
     imagemagick \
     libc-client-dev \
-	    libkrb5-dev \
+    libkrb5-dev \
     libmemcached-dev \
     libmariadbclient-dev \
     libfreetype6-dev \
@@ -70,25 +70,13 @@ RUN apt-get install --no-install-recommends -y \
     wget \
     zip
 
-# Add repo for NodeJS 8.x
-RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
-
-# Add repo for yarn
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
-    && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-
 RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /etc/apt/sources.list \
     && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367 \
     && apt-get -y update \
     && apt-get -y install ansible yarn
 
-RUN apt-get -y install nodejs
-
-# Install npm
-RUN curl -sL https://npmjs.org/install.sh | bash -
-
 # PHP extensions
-RUN pecl install imagick mcrypt-1.0.2 memcached${MEMCACHED_VERSION} redis${REDIS_VERSION} xdebug${XDEBUG_VERSION}
+RUN pecl install imagick memcached${MEMCACHED_VERSION} redis${REDIS_VERSION} xdebug${XDEBUG_VERSION}
 RUN docker-php-ext-enable imagick memcached redis
 
 RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl
@@ -119,9 +107,6 @@ RUN mkdir ~/drush-8 && cd ~/drush-8 && composer require drush/drush:${DRUSH_8_VE
 RUN mkdir ~/drush-9 && cd ~/drush-9 && composer require drush/drush:${DRUSH_9_VERSION}
 
 ENV PATH "/root/drush-8/vendor/bin:${PATH}"
-
-# Drupal console
-RUN wget https://drupalconsole.com/installer -O /usr/bin/drupal && chmod +x /usr/bin/drupal
 
 
 COPY ./configs/debug-php /usr/bin/debug-php
