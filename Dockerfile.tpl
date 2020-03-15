@@ -56,6 +56,7 @@ RUN apt-get install --no-install-recommends -y \
     libmagickwand-dev \
     libmcrypt-dev \
     libpng-dev \
+    libpq-dev \
     libjpeg-dev \
     libicu-dev \
     libbz2-dev \
@@ -82,7 +83,7 @@ RUN docker-php-ext-enable imagick memcached redis
 RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl
 RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
 
-RUN docker-php-ext-install -j$(nproc) bcmath bz2 exif fileinfo gd intl imap mbstring mysqli pdo pdo_mysql soap xmlrpc zip
+RUN docker-php-ext-install -j$(nproc) bcmath bz2 exif fileinfo gd intl imap mbstring mysqli pdo pdo_mysql pdo_pgsql soap xmlrpc zip
 
 RUN docker-php-ext-enable opcache
 
